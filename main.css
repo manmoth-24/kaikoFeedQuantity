@@ -1,0 +1,18 @@
+body{
+    margin: 0px;
+    padding-left: 50px;
+    background-image: url('背景.jpg');
+    background-size: cover;
+}
+#exportDiv{
+    line-height: 1em;
+}
+#exportDiv p{
+    margin-left: 20px;
+}
+.thx{
+    border: 2px solid black;
+    line-height: 1em;
+    padding: 30px;
+    margin: 300px 20px;
+}
