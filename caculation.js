@@ -12,6 +12,16 @@ var feedForKaiko = [
     550,
     3200
 ]
+
+//百頭当たりのくわ量(枚)
+var KuwaFeedForKaiko = [
+    1.727115717,
+    3.454231434,
+    13.81692573,
+    71.24352332,
+    184.2256765
+]
+
 //蚕のその齢でいる日数（眠は除く）
 var kaikoDays = [
     3,
@@ -20,6 +30,7 @@ var kaikoDays = [
     4,
     9
 ]
+
 function Caculation(){
     var form = document.mainForm
     var caculationMode = form.mode.value;
@@ -32,31 +43,112 @@ function Caculation(){
         form.rei4.value,
         form.rei5.value,
     ];
-    
-    
-    var kaikoCount = [];
-    kaikoAges.forEach((kaikoAge)=>{
-        kaikoCount.push(kaikoAge * 0.01 * allKaikoCount)
-    })
 
-    var feedQuantityAge = [];
-    var forEachCount = 0
-    kaikoCount.forEach((kaikoCount)=>{
-        feedQuantityAge.push(kaikoCount * feedForKaiko[forEachCount] * 0.01 * dayNumber / kaikoDays[forEachCount])
-        forEachCount ++;
-    })
+    function CaculationRate(ages){
+        allOfAge = 0
+        ages.forEach((element)=>{
+            allOfAge += parseInt(element)
+        })
+        var returnAge = []
+        ages.forEach((element)=>{
+            console.log(allOfAge)
+            console.log('element: ' + element)
+            returnAge.push(element / allOfAge * 100)
+        })
 
+        console.log('rate: ' + returnAge)
+        return returnAge
+    }
+    
+    function KaikoQuantity(criterionFeed,ThisKaikoAges){
+        var kaikoCount = [];
+        ThisKaikoAges.forEach((kaikoAge)=>{
+            kaikoCount.push(kaikoAge * 0.01 * allKaikoCount)
+        })
+
+        var feedQuantityAge = [];
+        for (var i = 0;i < kaikoCount.length;i++){
+            feedQuantityAge.push(kaikoCount[i] * criterionFeed[i] * 0.01 * dayNumber / kaikoDays[i])
+        }
+        console.log(kaikoCount)
+        console.log(feedQuantityAge)
+
+        return feedQuantityAge
+    }
+
+    function ExportFeedOnDiv(feedResult,unit){
+        var exportPlace = document.getElementById('exportDiv');
+
+        exportPlace.innerHTML = ''
+        for (var i = 1;i <= feedResult.length;i++){
+            var exportText = MakeElementOfP(i + '齢： ' + feedResult[i-1] + unit)
+            exportPlace.appendChild(exportText);
+        }
+    }
+
+    function GetTotalFeed(allFeed){
+        var totalFeed = 0;
+    
+        allFeed.forEach((feed)=>{
+            totalFeed += feed
+        })
+        return totalFeed
+    }
+
+    function ExportTotalFeedMakeNew(totalFeed){
+        var exportPlace = document.getElementById('exportDiv');
+        switch(caculationMode){
+            case '1':
+            case '3':
+                exportPlace.appendChild(document.createElement('hr'))
+                var totalFeedExportText = MakeElementOfP('計' + totalFeed + '枚')
+                exportPlace.appendChild(totalFeedExportText)
+                break;
+
+            case '2':
+            case '4':
+                exportPlace.appendChild(document.createElement('hr'))
+                var totalFeedExportText = MakeElementOfP('計' + totalFeed + 'g ――  ' + (totalFeed / 25) + 'cm')
+                var totalFeedExportText2 = MakeElementOfP('　⇀' + (totalFeed / 25 / 20) + '本')
+                exportPlace.appendChild(totalFeedExportText)
+                exportPlace.appendChild(totalFeedExportText2)
+
+                break;
+
+            default:
+
+                break;
+        }
+    } 
+    
+
+    //非関数ー実行部分
     var result = [];
     switch(caculationMode){
         case '1':
-        case '3':
-        case '4':
-            result = ['error']
+            result = KaikoQuantity(KuwaFeedForKaiko,kaikoAges);
+            ExportFeedOnDiv(result,'枚')
+            ExportTotalFeedMakeNew(GetTotalFeed(result))
+
             break;
         case '2':
-            result = feedQuantityAge;
+            result = KaikoQuantity(feedForKaiko,kaikoAges);
+            ExportFeedOnDiv(result,'g')
+            ExportTotalFeedMakeNew(GetTotalFeed(result))
+
             break;
-        case '5':
+        case '3':
+            var agesOfRate = CaculationRate(kaikoAges)
+            result = KaikoQuantity(KuwaFeedForKaiko,agesOfRate);
+            ExportFeedOnDiv(result,'枚')
+            ExportTotalFeedMakeNew(GetTotalFeed(result))
+
+            break;
+        case '4':
+            var agesOfRate = CaculationRate(kaikoAges)
+            result = KaikoQuantity(feedForKaiko,agesOfRate);
+            ExportFeedOnDiv(result,'g')
+            ExportTotalFeedMakeNew(GetTotalFeed(result))
             
             break;
         default:
@@ -65,21 +157,7 @@ function Caculation(){
     }
 
     console.log(kaikoAges)
-    console.log(kaikoCount)
-    console.log(feedQuantityAge)
     console.log(result)
 
-    var totalFeed = 0;
-    var exportPlace = document.getElementById('exportDiv');
-
-    exportPlace.innerHTML = ''
-    for (var i = 1;i <= result.length;i++){
-        var exportText = MakeElementOfP(i + '齢： ' + result[i-1] + 'g')
-        exportPlace.appendChild(exportText);
-        
-        totalFeed += result[i-1]
-    }
-    exportPlace.appendChild(document.createElement('hr'))
-    var totalFeedExportText = MakeElementOfP('計' + totalFeed + 'g ――  ' + (totalFeed / 25) + 'cm')
-    exportPlace.appendChild(totalFeedExportText)
+    
 }
