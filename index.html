@@ -6,36 +6,27 @@
     <title>蚕餌量計算サイト</title>
     <link rel="stylesheet" href="main.css">
     <link rel="icon" href="アイコン.png">
+    <script src="caculation.js"></script>
 </head>
 <body>
     <h1>蚕餌量計算―――――</h1>
     <p>モード３、４番目の比は適当（1:3）</p>
     <form name="mainForm">
-        <select name="mode">
-            <option value="1">齢期丁寧割合法（メンテナンス中）</option>
-            <option value="2" selected>★齢丁寧割合法</option>
-            <option value="3">多齢割合散予測法（メンテナンス中）</option>
-            <option value="4">集割無限分散予測法（メンテナンス中）</option>
-            <option value="5">★第二集割予測法（メンテナンス中）</option>
+        <select name="mode" onchange="DisplayMultipleInput(this.value)">
+            <optgroup label="蚕→餌量">
+                <optgroup label="百分率入力">
+                    <option value="1">桑の量-百分率</option>
+                    <option value="2" selected>★人工飼料の量-百分率</option>
+                </optgroup>
+                <optgroup label="比による入力">
+                    <option value="3">桑の量-比</option>
+                    <option value="4">人工飼料の量-比</option>
+                </optgroup>
+            </optgroup>
         </select>
         <fieldset>
             <legend>引数</legend>
-            <div id="rei-input">
-
-            </div>
-            <script>
-                var exportText = document.getElementById('rei-input');
-                for (var i = 1;i <= 5;i++){
-                    var newElement = document.createElement('input');
-                    newElement.type = 'number'
-                    newElement.name = 'rei' + i
-                    newElement.value = 0;
-                    var frameText = document.createElement('p')
-                    frameText.innerText = i + '齢(%)'
-                    frameText.appendChild(newElement)
-                    exportText.appendChild(frameText)
-                }
-            </script>
+            <div id="rei-input" onload="DisplayMultipleInput()"></div>
             <hr>
             <p>日数<input type="number" name="days" value="1"></p>
             <p>全体のおおよその匹数<input type="number" name="count" value="100"></p>
@@ -57,6 +48,7 @@
         <p><a href="https://www.irasutoya.com/2014/08/blog-post_75.html">アイコン</a></p>
         <p>※アイコンはGoogle図形描画で編集</p>
     </div>
-    <script src="caculation.js"></script>
+
+    <script src="mainScript.js"></script>
 </body>
 </html>
